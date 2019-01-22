@@ -12,42 +12,42 @@ import org.meri.jpa.util.JNDIUtil;
 
 public abstract class AbstractTestCase {
 
-	private JNDIUtil jndiUtil = new JNDIUtil();
-	private InMemoryDBUtil databaseUtil = new InMemoryDBUtil();
-	
-	@BeforeClass
-	public static void beforeClass() {
-		(new JNDIUtil()).initializeJNDI();
-		(new InMemoryDBUtil()).removeDatabase();
-	}
+    private JNDIUtil jndiUtil = new JNDIUtil();
+    private InMemoryDBUtil databaseUtil = new InMemoryDBUtil();
 
-	@Before
-	public void beforeEachTest() {
-		jndiUtil.initializeJNDI();
-		databaseUtil.initializeDatabase(getInitialChangeLog());
-	}
+    @BeforeClass
+    public static void beforeClass() {
+        (new JNDIUtil()).initializeJNDI();
+        (new InMemoryDBUtil()).removeDatabase();
+    }
 
-	protected abstract String getInitialChangeLog();
+    @Before
+    public void beforeEachTest() {
+        jndiUtil.initializeJNDI();
+        databaseUtil.initializeDatabase(getInitialChangeLog());
+    }
 
-	protected JNDIUtil getJndiUtil() {
-		return jndiUtil;
-	}
-	
-	protected InMemoryDBUtil getDatabaseUtil() {
-		return databaseUtil;
-	}
+    protected abstract String getInitialChangeLog();
 
-	protected Connection getConnection() {
-		try {
-			DataSource dataSource = databaseUtil.getDataSource();
-			return dataSource.getConnection();
-		} catch (SQLException e) {
-			throw new RuntimeException("Failed to create db connection.", e);
-		}
-	}
-	
-	protected void removeDatabase() {
-		databaseUtil.removeDatabase();
-	}
-	
+    protected JNDIUtil getJndiUtil() {
+        return jndiUtil;
+    }
+
+    protected InMemoryDBUtil getDatabaseUtil() {
+        return databaseUtil;
+    }
+
+    protected Connection getConnection() {
+        try {
+            DataSource dataSource = databaseUtil.getDataSource();
+            return dataSource.getConnection();
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to create db connection.", e);
+        }
+    }
+
+    protected void removeDatabase() {
+        databaseUtil.removeDatabase();
+    }
+
 }

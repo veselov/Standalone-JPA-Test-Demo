@@ -1,19 +1,17 @@
 package org.meri.jpa.simplest;
 
-import static org.junit.Assert.assertFalse;
-
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import javax.persistence.Query;
+import javax.persistence.*;
+import javax.persistence.criteria.*;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.meri.jpa.AbstractTestCase;
 import org.meri.jpa.simplest.entity.Person;
+
+import static org.junit.Assert.*;
 
 public class DemoJPATest extends AbstractTestCase {
 
@@ -38,6 +36,24 @@ public class DemoJPATest extends AbstractTestCase {
     em.close();
 
     assertFalse(allUsers.isEmpty());
+  }
+
+  @Test
+  public void boolLiteral() {
+
+    EntityManager em = factory.createEntityManager();
+
+    CriteriaBuilder cb = em.getCriteriaBuilder();
+    CriteriaQuery<Person> cq = cb.createQuery(Person.class);
+
+    Root<Person> r = cq.from(Person.class);
+    cq.select(r);
+    cq.where(cb.equal(r.get("woo"), cb.literal(Boolean.FALSE)));
+
+    TypedQuery<Person> tq = em.createQuery(cq);
+
+    assertTrue(!tq.getResultList().isEmpty());
+
   }
 
   @BeforeClass
