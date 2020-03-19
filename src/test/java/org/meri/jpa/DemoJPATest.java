@@ -29,58 +29,23 @@ public class DemoJPATest extends AbstractTestCase {
 
     em.getTransaction().begin();
 
-    em.createQuery("delete from E_Book b").executeUpdate();
-    em.createQuery("delete from E_Author a").executeUpdate();
-    em.createQuery("delete from E_OldBook b").executeUpdate();
-    em.createQuery("delete from E_OldAuthor a").executeUpdate();
-
-    E_Author author = new E_AuthorImpl();
-    author.setName("Lois McMaster Bujold");
+    E_Author author = new E_Author();
     em.persist(author);
-
-    E_Book book = new E_BookImpl();
-    book.setAuthor(author);
-    book.setName("Falling Free");
-    em.persist(book);
-
-    book = new E_BookImpl();
-    book.setAuthor(author);
-    book.setName("The Vor Game");
-    em.persist(book);
-
-    E_OldAuthor oldAuthor = new E_OldAuthor();
-    oldAuthor.setName("Lois McMaster Bujold");
-    em.persist(oldAuthor);
-
-    E_OldBook oldBook = new E_OldBook();
-    oldBook.setAuthor(oldAuthor);
-    oldBook.setName("Falling Free");
-    em.persist(oldBook);
-
-    oldBook = new E_OldBook();
-    oldBook.setAuthor(oldAuthor);
-    oldBook.setName("The Vor Game");
-    em.persist(oldBook);
+    long id = author.getId();
 
     em.getTransaction().commit();
+
+    em = factory.createEntityManager();
+
     em.getTransaction().begin();
 
+    author = em.find(E_Author.class, id);
+    em.remove(author);
     em.flush();
-    em.clear();
 
-    for (E_OldAuthor a : em.createQuery("select a from E_OldAuthor a", E_OldAuthor.class).getResultList()) {
-      System.out.println("Old Author "+a.getName()+" ("+a.getId()+"," + a.getClass().getName()+")");
-      for (E_OldBook b : a.getBooks()) {
-        System.out.println("  Book "+b.getName()+" ("+b.getId()+"," + b.getClass().getName()+")");
-      }
-    }
-
-    for (E_Author a : em.createQuery("select a from E_Author a", E_Author.class).getResultList()) {
-      System.out.println("Author "+a.getName()+" ("+a.getId()+"," + a.getClass().getName()+")");
-      for (E_Book b : a.getBooks()) {
-        System.out.println("  Book "+b.getName()+" ("+b.getId()+"," + b.getClass().getName()+")");
-      }
-    }
+    em.persist(author);
+    em.flush();
+    em.flush();
 
     em.getTransaction().rollback();
     em.close();

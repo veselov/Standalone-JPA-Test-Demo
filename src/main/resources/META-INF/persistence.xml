@@ -8,11 +8,6 @@
 
         <!-- JPA entities must be registered here -->
         <class>org.meri.jpa.simplest.entity.E_Author</class>
-        <class>org.meri.jpa.simplest.entity.E_AuthorImpl</class>
-        <class>org.meri.jpa.simplest.entity.E_OldAuthor</class>
-        <class>org.meri.jpa.simplest.entity.E_Book</class>
-        <class>org.meri.jpa.simplest.entity.E_BookImpl</class>
-        <class>org.meri.jpa.simplest.entity.E_OldBook</class>
 
         <!-- other properties -->
         <properties>
