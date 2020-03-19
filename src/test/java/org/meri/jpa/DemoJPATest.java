@@ -1,18 +1,13 @@
 package org.meri.jpa;
 
-import static org.junit.Assert.assertFalse;
-
-import java.util.List;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.meri.jpa.simplest.entity.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import javax.persistence.Query;
-
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.meri.jpa.simplest.entity.Person;
 
 public class DemoJPATest extends AbstractTestCase {
 
@@ -28,15 +23,69 @@ public class DemoJPATest extends AbstractTestCase {
   }
 
   @Test
-  @SuppressWarnings("unchecked")
   public void testJPA() {
+
     EntityManager em = factory.createEntityManager();
 
-    Query query = em.createQuery("SELECT x FROM Person x");
-    List<Person> allUsers = query.getResultList();
+    em.getTransaction().begin();
+
+    em.createQuery("delete from E_Book b").executeUpdate();
+    em.createQuery("delete from E_Author a").executeUpdate();
+    em.createQuery("delete from E_OldBook b").executeUpdate();
+    em.createQuery("delete from E_OldAuthor a").executeUpdate();
+
+    E_Author author = new E_AuthorImpl();
+    author.setName("Lois McMaster Bujold");
+    em.persist(author);
+
+    E_Book book = new E_BookImpl();
+    book.setAuthor(author);
+    book.setName("Falling Free");
+    em.persist(book);
+
+    book = new E_BookImpl();
+    book.setAuthor(author);
+    book.setName("The Vor Game");
+    em.persist(book);
+
+    E_OldAuthor oldAuthor = new E_OldAuthor();
+    oldAuthor.setName("Lois McMaster Bujold");
+    em.persist(oldAuthor);
+
+    E_OldBook oldBook = new E_OldBook();
+    oldBook.setAuthor(oldAuthor);
+    oldBook.setName("Falling Free");
+    em.persist(oldBook);
+
+    oldBook = new E_OldBook();
+    oldBook.setAuthor(oldAuthor);
+    oldBook.setName("The Vor Game");
+    em.persist(oldBook);
+
+    em.getTransaction().commit();
+    em.getTransaction().begin();
+
+    em.flush();
+    em.clear();
+
+    for (E_OldAuthor a : em.createQuery("select a from E_OldAuthor a", E_OldAuthor.class).getResultList()) {
+      System.out.println("Old Author "+a.getName()+" ("+a.getId()+"," + a.getClass().getName()+")");
+      for (E_OldBook b : a.getBooks()) {
+        System.out.println("  Book "+b.getName()+" ("+b.getId()+"," + b.getClass().getName()+")");
+      }
+    }
+
+    for (E_Author a : em.createQuery("select a from E_Author a", E_Author.class).getResultList()) {
+      System.out.println("Author "+a.getName()+" ("+a.getId()+"," + a.getClass().getName()+")");
+      for (E_Book b : a.getBooks()) {
+        System.out.println("  Book "+b.getName()+" ("+b.getId()+"," + b.getClass().getName()+")");
+      }
+    }
+
+    em.getTransaction().rollback();
     em.close();
 
-    assertFalse(allUsers.isEmpty());
+
   }
 
   @BeforeClass

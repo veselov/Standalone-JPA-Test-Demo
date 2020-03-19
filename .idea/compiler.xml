@@ -6,8 +6,12 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="Standalone-JPA-Test-Demo" />
         <module name="org.meri.jpa.tutorial" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="Standalone-JPA-Test-Demo" target="1.8" />
+    </bytecodeTargetLevel>
   </component>
 </project>
